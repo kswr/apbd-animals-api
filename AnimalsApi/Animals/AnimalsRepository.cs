@@ -5,6 +5,7 @@ namespace AnimalsApi.Animals;
 public interface IAnimalsRepository
 {
     IEnumerable<Animal> GetAnimals(string orderBy);
+    void Add(Animal animal);
 }
 
 public class Animal
@@ -42,6 +43,24 @@ public class AnimalsRepository : IAnimalsRepository
         }
 
         return res;
+    }
+
+    public void Add(Animal animal)
+    {
+        AssertCorrectness(animal);
+        using var con = new SqlConnection(ConString);
+        var command = new SqlCommand();
+        command.Connection = con;
+        command.CommandText = $"insert into Animal (Name, Description, Category, Area) values ('{animal.Name}', '{animal.Description}', '{animal.Category}', '{animal.Area}')";
+        con.Open();
+        command.ExecuteNonQuery();
+    }
+
+    private static void AssertCorrectness(Animal? animal)
+    {
+        if (new[] { animal.Name, animal.Area, animal.Description, animal.Category }.Any(field =>
+                String.IsNullOrEmpty(field))) throw new ArgumentException("missing field");
+        
     }
 
     private static void SanitizeOrderBy(string orderBy)
