@@ -31,7 +31,22 @@ public class AnimalsController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return Conflict();
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    public IActionResult DeleteAnimal(int idAnimal)
+    {
+        try
+        {
+            _animalsRepository.Delete(idAnimal);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest();
         }
     }
 }

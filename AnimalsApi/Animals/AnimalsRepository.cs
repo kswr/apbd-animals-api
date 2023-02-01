@@ -6,6 +6,7 @@ public interface IAnimalsRepository
 {
     IEnumerable<Animal> GetAnimals(string orderBy);
     void Add(Animal animal);
+    void Delete(int idAnimal);
 }
 
 public class Animal
@@ -52,6 +53,17 @@ public class AnimalsRepository : IAnimalsRepository
         var command = new SqlCommand();
         command.Connection = con;
         command.CommandText = $"insert into Animal (Name, Description, Category, Area) values ('{animal.Name}', '{animal.Description}', '{animal.Category}', '{animal.Area}')";
+        con.Open();
+        command.ExecuteNonQuery();
+    }
+
+    public void Delete(int idAnimal)
+    {
+        if (idAnimal == 0) throw new ArgumentException("incorrect id");
+        using var con = new SqlConnection(ConString);
+        var command = new SqlCommand();
+        command.Connection = con;
+        command.CommandText = $"delete from Animal where IdAnimal = {idAnimal}";
         con.Open();
         command.ExecuteNonQuery();
     }
